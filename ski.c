@@ -185,11 +185,12 @@ void* receiveAndSendAck(void* arg)
 			dane->head = delete(dane->head, status.MPI_SOURCE);
 		}
 			
-		
+		pthread_mutex_lock(&mutexClock);
+		clockLamport += 1;
+		pthread_mutex_unlock(&mutexClock);	
 		msg[0] = clockLamport;
 		msg[1] = -1;
 		MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);
-		clockLamport += 1; // ?
 	}
 	return NULL;
 }
