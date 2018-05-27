@@ -353,7 +353,6 @@ void* mainSkiThread(void* arg)
         while(1);
 		printf("[Wątek %d - main] wszytskie wątki odebrały moją wiadomość wiadomości. Pozdrawiam, watek %d\n", dane->rank, dane->rank);
 
-        pthread_mutex_unlock(&mutexCond);
 		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry.\n", dane->rank);
         // wyzerowanie ACK
         for (int i = 0; i < dane->size; i++)
@@ -418,6 +417,7 @@ int main(int argc, char **argv)
     struct data dane;
     dane.rank=rank;
     dane.size=size;
+	dane.head=NULL;
 	srand(rank);
     dane.myWeight = 70 + (30 - (rand() % 60));
     dane.tab_ack = malloc(dane.size*sizeof(int));
@@ -425,6 +425,13 @@ int main(int argc, char **argv)
     {
         dane.tab_ack[i] = 0;
     }
+	printf("Wątek %d próbuje coś wstawić do kolejki.\n", dane.rank, dane.myWeight);
+
+	dane.head = insert(dane.head, new_element(dane.rank, clockLamport, dane.myWeight));
+	printf("Wątek %d wstawione do kolejki.\n", dane.rank, dane.myWeight);
+
+	print(dane.head);
+
 	printf("Wątek %d zainicjował zmienne (waga = %d) i rozpocząl działnie.\n", dane.rank, dane.myWeight);
     pthread_t watek1,watek2;
     pthread_create(&watek1,NULL,receiveAndSendAck,&dane);
