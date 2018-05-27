@@ -45,7 +45,7 @@ queue_el * insert(queue_el *head, queue_el *insert_element) {
 		if(head == NULL){
 			head = insert_element;
 			first = 1;
-			break;		
+			break;
 		}
 
 		i = i + 1;
@@ -54,11 +54,11 @@ queue_el * insert(queue_el *head, queue_el *insert_element) {
 				current = current->next;
 			} else {
 				insert_next = 1;
-				break; 
+				break;
 			}
 		} else if (current->time == insert_element->time){
 			if(current->id < insert_element->id){
-				if(current->next != NULL){					
+				if(current->next != NULL){
 					current = current->next;
 				} else {
 					insert_next = 1;
@@ -69,12 +69,12 @@ queue_el * insert(queue_el *head, queue_el *insert_element) {
 			}
 		} else {
 			break;
-		}	
+		}
 	}
 
 	if((i == 1) && (insert_next == 0)){
 		head->previous = insert_element;
-		insert_element->next = head;		
+		insert_element->next = head;
 		head = insert_element;
 	}else if (first != 1) {
 		if(insert_next == 1){
@@ -84,18 +84,18 @@ queue_el * insert(queue_el *head, queue_el *insert_element) {
 			insert_element->previous = current->previous;
 			current->previous->next = insert_element;
 			current->previous = insert_element;
-			insert_element->next = current;	
+			insert_element->next = current;
 		}
 	}
 
 return head;
-	
+
 }
 
 
 queue_el * delete(queue_el *head, int id){
 	queue_el *current = head;
-	
+
 	while(1){
 		if(current == NULL){
 			break;
@@ -109,9 +109,9 @@ queue_el * delete(queue_el *head, int id){
 			} else {
 				current->next->previous = current->previous;
 				current->previous->next = current->next;
-			}			
+			}
 			free(current);
-			break; 	
+			break;
 		}
 		current = current->next;
 	}
@@ -132,10 +132,10 @@ void print(queue_el *head) {
 int checkWeights(queue_el *head, int myId) {
 	queue_el *current = head;
 	printf("KOLEJKA\n");
-	 
+
 	int sum = 0;
 	while (current != NULL && current->id != myId) {
-		
+
 		sum = sum + current->weight;
 		current = current->next;
 	}
@@ -171,12 +171,18 @@ void* receiveAndSendAck(void* arg)
 		clockLamport += 1;
 		// semafor V
 		pthread_mutex_unlock(&mutexClock);
-	
+
 		// wstaw do kolejki
 		if(status.MPI_TAG == TAG_REQ)
 		{
 			dane->head = insert(dane->head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
-		} 
+            pthread_mutex_lock(&mutexClock);
+            clockLamport += 1;
+            msg[0] = clockLamport;
+            pthread_mutex_unlock(&mutexClock);
+            msg[1] = -1;
+            MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);³
+		}
 		else if(status.MPI_TAG == TAG_ACK)
 		{
 			dane->tab_ack[status.MPI_SOURCE] = 1;
@@ -184,13 +190,8 @@ void* receiveAndSendAck(void* arg)
 		{
 			dane->head = delete(dane->head, status.MPI_SOURCE);
 		}
-			
-		pthread_mutex_lock(&mutexClock);
-		clockLamport += 1;
-		pthread_mutex_unlock(&mutexClock);	
-		msg[0] = clockLamport;
-		msg[1] = -1;
-		MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);
+
+
 	}
 	return NULL;
 }
@@ -227,15 +228,15 @@ void* mainSkiThread(void* arg)
 			for (int i = 0; i< dane->size;i++){
 				if (dane->tab_ack[i] != 1){
 					succes = 0;
-					break;				
+					break;
 				}
 			}
 			skiLiftAvailable = succes;
-			
+
 		}
 		// wyzerowanie ACK
 		for (int i = 0; i < dane->size; i++){
-			dane->tab_ack[i] = 0;	
+			dane->tab_ack[i] = 0;
 		}
 		// GO!
 		sleep(5);
@@ -254,11 +255,11 @@ void* mainSkiThread(void* arg)
 		}
 		// TODO sleep random
 		sleep(5);
-		
-		
-		
-		
-	}	
+
+
+
+
+	}
 	return NULL;
 	return NULL;
 }
@@ -277,7 +278,7 @@ int main(int argc, char **argv)
 	dane.myWeight = 70 + (30 - (rand() % 60));
 	dane.tab_ack = malloc(dane.size*sizeof(int));
 	for (int i = 0; i < dane.size; i++){
-		dane.tab_ack[i] = 0;	
+		dane.tab_ack[i] = 0;
 	}
 	pthread_t watek1,watek2;
 	pthread_create(&watek1,NULL,receiveAndSendAck,&dane);
