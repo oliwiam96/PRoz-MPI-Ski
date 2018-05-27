@@ -19,6 +19,10 @@ int stop = 0;
 
 
 pthread_mutex_t	mutexClock = PTHREAD_MUTEX_INITIALIZER;
+
+pthread_mutex_t mutexCond = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
 typedef struct queue_element
 {
     int id;
@@ -192,6 +196,7 @@ queue_el * new_element(int id, int time, int weight)
     return new;
 }
 
+
 // ten watek to 2 w naszym sprawku
 void* receiveAndSendAck(void* arg)
 {
@@ -224,7 +229,22 @@ void* receiveAndSendAck(void* arg)
         }
         else if(status.MPI_TAG == TAG_ACK)
         {
+            pthread_mutex_lock(&mutexCond);
             dane->tab_ack[status.MPI_SOURCE] = 1;
+            int success = 1;
+            for (int i = 0; i< dane->size; i++)
+            {
+                if (dane->tab_ack[i] != 1)
+                {
+                    success = 0;
+                    break;
+                }
+            }
+            if(success)
+            {
+                pthread_cond_signal(&cond); // Should wake up *one* thread
+            }
+            pthread_mutex_unlock(&mutexCond);
         }
         else if(status.MPI_TAG == TAG_RELEASE)
         {
@@ -261,21 +281,32 @@ void* mainSkiThread(void* arg)
         //wstaw do kolejki wlasne zadanie
         dane->head = insert(dane->head, new_element(dane->rank, clockLamport, dane->myWeight));
         //sprawdz warunek bazujacy na kolejce (suma wag) i czy od wszystkich ack
-        int skiLiftAvailable = 0;
-        while(!skiLiftAvailable)
+
+        pthread_mutex_lock(&mutexCond);
+        do
         {
-            int succes = 1;
+            int success = 1;
             for (int i = 0; i< dane->size; i++)
             {
                 if (dane->tab_ack[i] != 1)
                 {
-                    succes = 0;
+                    success = 0;
                     break;
                 }
             }
-            skiLiftAvailable = succes;
+            if(success)
+            {
+                break;
+            }
+            else
+            {
+                pthread_cond_wait(&cond, &mutexCond);
+            }
+
 
         }
+        while(1);
+        pthread_mutex_unlock(&mutexCond);
         // wyzerowanie ACK
         for (int i = 0; i < dane->size; i++)
         {
@@ -297,6 +328,7 @@ void* mainSkiThread(void* arg)
             }
         }
         // TODO sleep random
+        // TODO usun swoje zadanie!!!
         sleep(5);
 
 
@@ -344,6 +376,8 @@ int main(int argc, char **argv)
     pthread_join(watek1,NULL);
     pthread_join(watek2,NULL);
     pthread_mutex_destroy(&mutexClock);
+    pthread_cond_destroy(&cond);
+    pthread_mutex_destroy(mutexCond);
     free(dane.tab_ack);
     MPI_Finalize();
 }
