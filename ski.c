@@ -37,6 +37,7 @@ struct data
     queue_el *head;
 };
 
+
 queue_el * insert(queue_el *head, queue_el *insert_element)
 {
     queue_el *current = head;
@@ -117,6 +118,20 @@ queue_el * insert(queue_el *head, queue_el *insert_element)
 
 }
 
+int queueCount(queue_el *head)
+{
+    int count = 0;
+    queue_el *current = head;
+ 
+    while(current != NULL)
+    {
+        count += 1;
+        current = current->next;
+    }
+   
+    return count;
+}
+
 
 queue_el * delete(queue_el *head, int id)
 {
@@ -129,9 +144,13 @@ queue_el * delete(queue_el *head, int id)
             break;
         }
 
-        if(current->id == id)
+		if(current->id == id)
         {
-            if(current->previous == NULL)
+            if(queueCount(head)) // TO TEN IF
+            {
+                head = NULL;
+            }
+            else if(current->previous == NULL)
             {
                 head = current->next;
             }
@@ -143,9 +162,10 @@ queue_el * delete(queue_el *head, int id)
             {
                 current->next->previous = current->previous;
                 current->previous->next = current->next;
-            }
+            }      
+           
             free(current);
-            break;
+            break;  
         }
         current = current->next;
     }
@@ -191,6 +211,7 @@ queue_el * new_element(int id, int time, int weight)
 
     return new;
 }
+
 
 // ten watek to 2 w naszym sprawku
 void* receiveAndSendAck(void* arg)
@@ -304,13 +325,14 @@ void* mainSkiThread(void* arg)
 
     }
     return NULL;
-    return NULL;
 }
 
 
 
 int main(int argc, char **argv)
 {
+	
+	printf("Rozpoczynam działanie pogramu\n");
     int rank,size;
 
 
