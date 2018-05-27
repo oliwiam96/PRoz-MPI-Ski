@@ -181,7 +181,7 @@ void* receiveAndSendAck(void* arg)
             msg[0] = clockLamport;
             pthread_mutex_unlock(&mutexClock);
             msg[1] = -1;
-            MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);³
+            MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);
 		}
 		else if(status.MPI_TAG == TAG_ACK)
 		{
