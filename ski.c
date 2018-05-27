@@ -230,8 +230,10 @@ void* receiveAndSendAck(void* arg)
         int msg[MSG_SIZE], receivedClock, receivedWeight;
         struct data* dane = (struct data*)arg;
 		
-		
+
         MPI_Recv(msg, MSG_SIZE, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+		printf("[Wątek %d - ack] otrzymał wiadomość od  %d (clock=%d, weight=%d)\n", dane->rank, status.MPI_SOURCE, msg[0], msg[1]);
+
         receivedClock = msg[0];
         receivedWeight = msg[1];
         // semafor  P
@@ -308,12 +310,13 @@ void* mainSkiThread(void* arg)
         clockLamport += 1;
         msg[0] = clockLamport;
         msg[1] = dane->myWeight;
+		printf("[Wątek %d - main] wysłała do wsyztskich request.\n", dane->rank);
+
         for(i = 0; i < dane->size; i++)
         {
             if(i != dane->rank) // do not send to yourself
             {
                 MPI_Send(msg, MSG_SIZE, MPI_INT, i, TAG_REQ, MPI_COMM_WORLD);
-				printf("[Wątek %d - main] wysłał request.\n", dane->rank);
 
             }
         }
