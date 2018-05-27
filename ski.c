@@ -362,6 +362,7 @@ void* mainSkiThread(void* arg)
         {
             dane->tab_ack[i] = 0;
         }
+	dane->tab_ack[dane->rank] = 1; //set ack to 1 from yourself
         // GO!
         sleep(GOUPTIME);
 		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry. [zegar = %d]\n", dane->rank, clockLamport);
@@ -428,6 +429,7 @@ int main(int argc, char **argv)
     {
         dane.tab_ack[i] = 0;
     }
+    dane.tab_ack[dane.rank] = 1; // set ack from yourself to 1
 
 	printf("Wątek %d zainicjował zmienne (waga = %d) i rozpocząl działnie.\n", dane.rank, dane.myWeight);
     pthread_t watek1,watek2;
