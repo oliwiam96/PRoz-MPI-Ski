@@ -425,12 +425,6 @@ int main(int argc, char **argv)
     {
         dane.tab_ack[i] = 0;
     }
-	printf("Wątek %d próbuje coś wstawić do kolejki.\n", dane.rank, dane.myWeight);
-
-	dane.head = insert(dane.head, new_element(dane.rank, clockLamport, dane.myWeight));
-	printf("Wątek %d wstawione do kolejki.\n", dane.rank, dane.myWeight);
-
-	print(dane.head);
 
 	printf("Wątek %d zainicjował zmienne (waga = %d) i rozpocząl działnie.\n", dane.rank, dane.myWeight);
     pthread_t watek1,watek2;
