@@ -337,7 +337,6 @@ void* mainSkiThread(void* arg)
 
     }
     return NULL;
-    return NULL;
 }
 
 
