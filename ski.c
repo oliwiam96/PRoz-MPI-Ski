@@ -345,5 +345,5 @@ int main(int argc, char **argv)
     pthread_join(watek2,NULL);
     pthread_mutex_destroy(&mutexClock);
     free(dane.tab_ack);
-    MPI_Finilize();
+    MPI_Finalize();
 }
