@@ -270,7 +270,7 @@ int main(int argc, char **argv)
 	struct data dane;
 	dane.rank=rank;
 	dane.size=size;
-	dane.myWeight = 70;
+	dane.myWeight = 70 + (30 - (rand() % 60));
 	dane.tab_ack = malloc(dane.size*sizeof(int));
 	for (int i = 0; i < dane.size; i++){
 		dane.tab_ack[i] = 0;	
