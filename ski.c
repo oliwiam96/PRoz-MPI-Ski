@@ -3,12 +3,14 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <time.h>
 #define MSG_SIZE 2
 #define MSG_HELLO 100
 #define TAG_REQ 123
 #define TAG_ACK 456
 #define TAG_RELEASE 789
 #define Capacity 1000
+#define GOUPTIME 5
 
 //	TODO WHO IS GONNA RECEIVE A RELEASE MSG?!
 
@@ -220,11 +222,15 @@ queue_el * new_element(int id, int time, int weight)
 // ten watek to 2 w naszym sprawku
 void* receiveAndSendAck(void* arg)
 {
+	
+
     while(!stop)
     {
         MPI_Status status;
         int msg[MSG_SIZE], receivedClock, receivedWeight;
         struct data* dane = (struct data*)arg;
+		
+		
         MPI_Recv(msg, MSG_SIZE, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         receivedClock = msg[0];
         receivedWeight = msg[1];
@@ -235,10 +241,13 @@ void* receiveAndSendAck(void* arg)
         clockLamport += 1;
         // semafor V
         pthread_mutex_unlock(&mutexClock);
+		
 
         // wstaw do kolejki
         if(status.MPI_TAG == TAG_REQ)
         {
+			printf("[Wątek %d - ack] wstawia do kolejki zgłoszenie %d.\n", dane->rank, status.MPI_SOURCE);
+
             pthread_mutex_lock(&mutexClock);
             dane->head = insert(dane->head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
             clockLamport += 1;
@@ -249,6 +258,8 @@ void* receiveAndSendAck(void* arg)
         }
         else if(status.MPI_TAG == TAG_ACK)
         {
+			printf("[Wątek %d - ack] ustawia w tablicy ack od  %d.\n", dane->rank, status.MPI_SOURCE);
+
             pthread_mutex_lock(&mutexCond);
             dane->tab_ack[status.MPI_SOURCE] = 1;
             int success = 1;
@@ -268,6 +279,8 @@ void* receiveAndSendAck(void* arg)
         }
         else if(status.MPI_TAG == TAG_RELEASE)
         {
+			printf("[Wątek %d - ack] usuwa z kolejki zgłoszenie %d.\n", dane->rank, status.MPI_SOURCE);
+
             pthread_mutex_lock(&mutexClock);
             dane->head = delete(dane->head, status.MPI_SOURCE);
             pthread_mutex_unlock(&mutexClock);
@@ -280,10 +293,14 @@ void* receiveAndSendAck(void* arg)
 
 void* mainSkiThread(void* arg)
 {
+
+	
     while(!stop)
     {
         int msg[MSG_SIZE];
         struct data* dane = (struct data*)arg;
+		
+	
         int i;
         int receivedClock, receivedStatus;
         // semafor P
@@ -296,15 +313,21 @@ void* mainSkiThread(void* arg)
             if(i != dane->rank) // do not send to yourself
             {
                 MPI_Send(msg, MSG_SIZE, MPI_INT, i, TAG_REQ, MPI_COMM_WORLD);
+				printf("[Wątek %d - main] wysłał request.\n", dane->rank);
+
             }
         }
         // semafor V
         //wstaw do kolejki wlasne zadanie
+		printf("[Wątek %d - main] chce wstawić do swojej kolejki swój request.\n", dane->rank);
         dane->head = insert(dane->head, new_element(dane->rank, clockLamport, dane->myWeight));
+		printf("[Wątek %d - main] wstawił do swojej kolejki swój request.\n", dane->rank);
+
         pthread_mutex_unlock(&mutexClock);
         //sprawdz warunek bazujacy na kolejce (suma wag) i czy od wszystkich ack
 
         pthread_mutex_lock(&mutexCond);
+		printf("[Wątek %d - main] sprawdza czy wszytskie wątki odebrały wiadomości.\n", dane->rank);
         do
         {
             int success = 1;
@@ -328,19 +351,26 @@ void* mainSkiThread(void* arg)
 
         }
         while(1);
+		printf("[Wątek %d - main] wszytskie wątki odebrały moją wiadomość wiadomości. Pozdrawiam, watek %d\n", dane->rank, dane->rank);
+
         pthread_mutex_unlock(&mutexCond);
+		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry.\n", dane->rank);
         // wyzerowanie ACK
         for (int i = 0; i < dane->size; i++)
         {
             dane->tab_ack[i] = 0;
         }
         // GO!
-        sleep(5);
+        sleep(GOUPTIME);
+		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry.\n", dane->rank);
 
         // send RELEASE
         pthread_mutex_lock(&mutexClock);
         clockLamport += 1;
         msg[0] = clockLamport;
+		
+		printf("[Wątek %d - main] wysyła release synał do wszystkich i zjeżdża na dół.\n", dane->rank);
+
         for(i = 0; i < dane->size; i++)
         {
             if(i != dane->rank) // do not send to yourself
@@ -348,11 +378,14 @@ void* mainSkiThread(void* arg)
                 MPI_Send(msg, MSG_SIZE, MPI_INT, i, TAG_RELEASE, MPI_COMM_WORLD);
             }
         }
-        // TODO sleep random
+        // sleep random przy zjeździe
+		printf("[Wątek %d - main] usuwa swoje zgłoszenie ze swojej kolejki.\n", dane->rank);
+
         //  usun swoje zadanie z kolejki
         dane->head = delete(dane->head, dane->rank);
         pthread_mutex_unlock(&mutexClock);
-        sleep(5);
+        sleep(10 - (rand() % 7)); // czy to jest potzrebne?
+		printf("[Wątek %d - main] zjechał i znowy  ustawia się do kolejki narciarzy.\n", dane->rank);
 
     }
     return NULL;
@@ -363,7 +396,7 @@ void* mainSkiThread(void* arg)
 int main(int argc, char **argv)
 {
 	
-	printf("Rozpoczynam działanie pogramu\n");
+	srand(time(NULL)); 
     int rank,size;
 
 
@@ -385,12 +418,14 @@ int main(int argc, char **argv)
     struct data dane;
     dane.rank=rank;
     dane.size=size;
+	srand(rank);
     dane.myWeight = 70 + (30 - (rand() % 60));
     dane.tab_ack = malloc(dane.size*sizeof(int));
     for (int i = 0; i < dane.size; i++)
     {
         dane.tab_ack[i] = 0;
     }
+	printf("Wątek %d zainicjował zmienne (waga = %d) i rozpocząl działnie.\n", dane.rank, dane.myWeight);
     pthread_t watek1,watek2;
     pthread_create(&watek1,NULL,receiveAndSendAck,&dane);
     pthread_create(&watek2,NULL,mainSkiThread,&dane);
@@ -401,4 +436,5 @@ int main(int argc, char **argv)
     pthread_mutex_destroy(&mutexCond);
     free(dane.tab_ack);
     MPI_Finalize();
+	printf("Koniec programu");
 }
