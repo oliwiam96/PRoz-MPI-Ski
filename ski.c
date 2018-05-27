@@ -34,11 +34,11 @@ typedef struct queue_element
 
 struct data
 {
-    int rank;
-    int size;
-    int myWeight;
-    int * tab_ack;
-    queue_el *head;
+    int rank; // my own rank
+    int size; // how many skiers
+    int myWeight; // my own weight
+    int * tab_ack; // did I receive ack from a skier with that id? 1/0
+    queue_el *head; // pointer to a head of a queue
 };
 
 queue_el * insert(queue_el *head, queue_el *insert_element)
@@ -219,13 +219,13 @@ void* receiveAndSendAck(void* arg)
         // wstaw do kolejki
         if(status.MPI_TAG == TAG_REQ)
         {
-            dane->head = insert(dane->head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
             pthread_mutex_lock(&mutexClock);
+            dane->head = insert(dane->head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
             clockLamport += 1;
             msg[0] = clockLamport;
-            pthread_mutex_unlock(&mutexClock);
             msg[1] = -1;
             MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);
+            pthread_mutex_unlock(&mutexClock);
         }
         else if(status.MPI_TAG == TAG_ACK)
         {
@@ -248,7 +248,9 @@ void* receiveAndSendAck(void* arg)
         }
         else if(status.MPI_TAG == TAG_RELEASE)
         {
+            pthread_mutex_lock(&mutexClock);
             dane->head = delete(dane->head, status.MPI_SOURCE);
+            pthread_mutex_unlock(&mutexClock);
         }
 
 
@@ -268,8 +270,6 @@ void* mainSkiThread(void* arg)
         pthread_mutex_lock(&mutexClock);
         clockLamport += 1;
         msg[0] = clockLamport;
-        // semafor V
-        pthread_mutex_unlock(&mutexClock);
         msg[1] = dane->myWeight;
         for(i = 0; i < dane->size; i++)
         {
@@ -278,8 +278,10 @@ void* mainSkiThread(void* arg)
                 MPI_Send(msg, MSG_SIZE, MPI_INT, i, TAG_REQ, MPI_COMM_WORLD);
             }
         }
+        // semafor V
         //wstaw do kolejki wlasne zadanie
         dane->head = insert(dane->head, new_element(dane->rank, clockLamport, dane->myWeight));
+        pthread_mutex_unlock(&mutexClock);
         //sprawdz warunek bazujacy na kolejce (suma wag) i czy od wszystkich ack
 
         pthread_mutex_lock(&mutexCond);
@@ -319,7 +321,6 @@ void* mainSkiThread(void* arg)
         pthread_mutex_lock(&mutexClock);
         clockLamport += 1;
         msg[0] = clockLamport;
-        pthread_mutex_unlock(&mutexClock);
         for(i = 0; i < dane->size; i++)
         {
             if(i != dane->rank) // do not send to yourself
@@ -329,14 +330,11 @@ void* mainSkiThread(void* arg)
         }
         // TODO sleep random
         //  usun swoje zadanie z kolejki
-	dane->head = delete(dane->head, dane->rank);
+        dane->head = delete(dane->head, dane->rank);
+        pthread_mutex_unlock(&mutexClock);
         sleep(5);
 
-
-
-
     }
-    return NULL;
     return NULL;
 }
 
