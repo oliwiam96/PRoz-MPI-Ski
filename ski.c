@@ -239,13 +239,17 @@ void* mainSkiThread(void* arg)
 		}
 		// GO!
 		sleep(5);
+
 		// send RELEASE
+		pthread_mutex_lock(&mutexClock);
+		clockLamport += 1;
+		msg[0] = clockLamport;
+		pthread_mutex_unlock(&mutexClock);
 		for(i = 0; i < dane->size; i++)
 		{
 			if(i != dane->rank) // do not send to yourself
 			{
 				MPI_Send(msg, MSG_SIZE, MPI_INT, i, TAG_RELEASE, MPI_COMM_WORLD);
-				clockLamport += 1; // ?
 			}
 		}
 		// TODO sleep random
