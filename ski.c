@@ -328,7 +328,8 @@ void* mainSkiThread(void* arg)
             }
         }
         // TODO sleep random
-        // TODO usun swoje zadanie!!!
+        //  usun swoje zadanie z kolejki
+	dane->head = delete(dane->head, dane->rank);
         sleep(5);
 
 
