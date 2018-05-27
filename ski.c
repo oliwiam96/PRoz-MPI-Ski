@@ -176,12 +176,12 @@ void* receiveAndSendAck(void* arg)
 		if(status.MPI_TAG == TAG_REQ)
 		{
 			dane->head = insert(dane->head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
-            pthread_mutex_lock(&mutexClock);
-            clockLamport += 1;
-            msg[0] = clockLamport;
-            pthread_mutex_unlock(&mutexClock);
-            msg[1] = -1;
-            MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);
+            		pthread_mutex_lock(&mutexClock);
+           	 	clockLamport += 1;
+           		msg[0] = clockLamport;
+            		pthread_mutex_unlock(&mutexClock);
+            		msg[1] = -1;
+            		MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);
 		}
 		else if(status.MPI_TAG == TAG_ACK)
 		{
