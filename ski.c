@@ -205,6 +205,7 @@ void* mainSkiThread(void* arg)
 		int receivedClock, receivedStatus;
 		// semafor P
 		pthread_mutex_lock(&mutexClock);
+		clockLamport += 1;
 		msg[0] = clockLamport;
 		// semafor V
 		pthread_mutex_unlock(&mutexClock);
@@ -214,7 +215,6 @@ void* mainSkiThread(void* arg)
 			if(i != dane->rank) // do not send to yourself
 			{
 				MPI_Send(msg, MSG_SIZE, MPI_INT, i, TAG_REQ, MPI_COMM_WORLD);
-				clockLamport += 1; // ?
 			}
 		}
 		//wstaw do kolejki wlasne zadanie
