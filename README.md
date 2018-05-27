@@ -1,4 +1,4 @@
-#Projekt na zajęcia z Przetwarzania Rozproszonego
+# Projekt na zajęcia z Przetwarzania Rozproszonego
 
 Compile with
 ```
