@@ -164,12 +164,11 @@ void* receiveAndSendAck(void* arg)
 		MPI_Recv(msg, MSG_SIZE, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		receivedClock = msg[0];
 		receivedWeight = msg[1];
-		// TODO czy przed sprawdzeniem/ po sprawdzeniu maksa tez zwiekszyc zegar
-		clockLamport += 1; // ?
 		// semafor  P
 		pthread_mutex_lock(&mutexClock);
 
 		clockLamport = (clockLamport > receivedClock) ? clockLamport : receivedClock;
+		clockLamport += 1;
 		// semafor V
 		pthread_mutex_unlock(&mutexClock);
 	
