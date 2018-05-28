@@ -389,7 +389,7 @@ void* mainSkiThread(void* arg)
         pthread_mutex_unlock(&mutexClock);
 		
 		int randomTime = 10 - (rand() % 7);
-		printf("[Wątek %d - main] wjeżdzam do góry przez %d sekund [zegar = %d]\n", dane->rank, GOUPTIME);
+		printf("[Wątek %d - main] zjedża z góry przez %d sekund................ [zegar = %d]\n", dane->rank, randomTime);
 		sleep(randomTime); // czy to jest potzrebne?
 		printf("[Wątek %d - main] zjechał i znowy  ustawia się do kolejki narciarzy. [zegar = %d]\n", dane->rank, clockLamport);
 
