@@ -261,8 +261,20 @@ void* receiveAndSendAck(void* arg)
         {
 			printf("[Wątek %d - ack] ustawia w tablicy ack od  %d. [zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
 
+
             pthread_mutex_lock(&mutexCond);
             dane->tab_ack[status.MPI_SOURCE] = 1;
+			
+			//print tab_ack
+			int j;
+			printf("Tab_ack: [ %d", dane->tab_ack[0]);
+			for (j = 1; j< dane->size; j++)
+			{
+				printf(", %d", dane->tab_ack[j]);
+			}
+			printf("]\n");
+			
+			
             int success = 1;
             for (int i = 0; i< dane->size; i++)
             {
@@ -272,11 +284,12 @@ void* receiveAndSendAck(void* arg)
                     break;
                 }
             }
+			pthread_mutex_unlock(&mutexCond);
+
             if(success)
             {
                 pthread_cond_signal(&cond); // Should wake up *one* thread
             }
-            pthread_mutex_unlock(&mutexCond);
         }
         else if(status.MPI_TAG == TAG_RELEASE)
         {
@@ -353,6 +366,10 @@ void* mainSkiThread(void* arg)
 
         }
         while(1);
+		
+		//dodałem tutaj ten mutex unlock
+		pthread_mutex_unlock(&mutexCond);
+
 		printf("[Wątek %d - main] wszytskie wątki odebrały moją wiadomość wiadomości. [zegar = %d] Pozdrawiam, watek %d\n", dane->rank, clockLamport, dane->rank);
 
 		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry. [zegar = %d]\n", dane->rank, clockLamport);
@@ -363,7 +380,7 @@ void* mainSkiThread(void* arg)
         }
 		dane->tab_ack[dane->rank] = 1; //set ack to 1 from yourself
         // GO!
-		printf("[Wątek %d - main] wjeżdzam do góry przez %d sekund [zegar = %d]\n", dane->rank, GOUPTIME);
+		printf("[Wątek %d - main] wjeżdzam do góry przez %d sekund [zegar = %d]\n", dane->rank, GOUPTIME, clockLamport);
         sleep(GOUPTIME);
 
         // send RELEASE
@@ -389,7 +406,7 @@ void* mainSkiThread(void* arg)
         pthread_mutex_unlock(&mutexClock);
 		
 		int randomTime = 10 - (rand() % 7);
-		printf("[Wątek %d - main] zjedża z góry przez %d sekund................ [zegar = %d]\n", dane->rank, randomTime);
+		printf("[Wątek %d - main] zjedża z góry przez %d sekund................ [zegar = %d]\n", dane->rank, randomTime, clockLamport);
 		sleep(randomTime); // czy to jest potzrebne?
 		printf("[Wątek %d - main] zjechał i znowy  ustawia się do kolejki narciarzy. [zegar = %d]\n", dane->rank, clockLamport);
 
