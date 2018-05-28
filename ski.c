@@ -183,7 +183,6 @@ queue_el * delete(queue_el *head, int id)
 void print(queue_el *head)
 {
     queue_el *current = head;
-    printf("KOLEJKA\n");
 
     while (current != NULL)
     {
@@ -194,8 +193,6 @@ void print(queue_el *head)
 int checkWeights(queue_el *head, int myId)
 {
     queue_el *current = head;
-    printf("KOLEJKA\n");
-
     int sum = 0;
     while (current != NULL && current->id != myId)
     {
@@ -252,6 +249,8 @@ void* receiveAndSendAck(void* arg)
 
             pthread_mutex_lock(&mutexClock);
             dane->head = insert(dane->head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
+			printf("[wątek %d] moja kolejka to: ", dane->rank);
+			print(dane->head);
             clockLamport += 1;
             msg[0] = clockLamport;
             msg[1] = -1;
@@ -322,7 +321,7 @@ void* mainSkiThread(void* arg)
         }
         // semafor V
         //wstaw do kolejki wlasne zadanie
-		printf("[Wątek %d - main] chce wstawić do swojej kolejki swój request. [zegar = %d]\n", dane->rank, clockLamport);
+		//printf("[Wątek %d - main] chce wstawić do swojej kolejki swój request. [zegar = %d]\n", dane->rank, clockLamport);
         dane->head = insert(dane->head, new_element(dane->rank, clockLamport, dane->myWeight));
 		printf("[Wątek %d - main] wstawił do swojej kolejki swój request. [zegar = %d]\n", dane->rank, clockLamport);
 
@@ -362,17 +361,16 @@ void* mainSkiThread(void* arg)
         {
             dane->tab_ack[i] = 0;
         }
-	dane->tab_ack[dane->rank] = 1; //set ack to 1 from yourself
+		dane->tab_ack[dane->rank] = 1; //set ack to 1 from yourself
         // GO!
+		printf("[Wątek %d - main] wjeżdzam do góry przez %d sekund [zegar = %d]\n", dane->rank, GOUPTIME);
         sleep(GOUPTIME);
-		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry. [zegar = %d]\n", dane->rank, clockLamport);
 
         // send RELEASE
         pthread_mutex_lock(&mutexClock);
         clockLamport += 1;
         msg[0] = clockLamport;
 		
-		printf("[Wątek %d - main] wysyła release synał do wszystkich i zjeżdża na dół. [zegar = %d]\n", dane->rank, clockLamport);
 
         for(i = 0; i < dane->size; i++)
         {
@@ -381,13 +379,18 @@ void* mainSkiThread(void* arg)
                 MPI_Send(msg, MSG_SIZE, MPI_INT, i, TAG_RELEASE, MPI_COMM_WORLD);
             }
         }
+		printf("[Wątek %d - main] wysyłał release synał do wszystkich i zjeżdża na dół. [zegar = %d]\n", dane->rank, clockLamport);
+
         // sleep random przy zjeździe
 		printf("[Wątek %d - main] usuwa swoje zgłoszenie ze swojej kolejki. [zegar = %d]\n", dane->rank, clockLamport);
 
         //  usun swoje zadanie z kolejki
         dane->head = delete(dane->head, dane->rank);
         pthread_mutex_unlock(&mutexClock);
-        sleep(10 - (rand() % 7)); // czy to jest potzrebne?
+		
+		int randomTime = 10 - (rand() % 7);
+		printf("[Wątek %d - main] wjeżdzam do góry przez %d sekund [zegar = %d]\n", dane->rank, GOUPTIME);
+		sleep(randomTime); // czy to jest potzrebne?
 		printf("[Wątek %d - main] zjechał i znowy  ustawia się do kolejki narciarzy. [zegar = %d]\n", dane->rank, clockLamport);
 
     }
