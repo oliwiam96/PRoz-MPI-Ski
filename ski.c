@@ -229,7 +229,7 @@ void* receiveAndSendAck(void* arg)
 		
 
         MPI_Recv(msg, MSG_SIZE, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		printf("[Wątek %d - ack] otrzymał wiadomość od  %d  [zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
+		printf("[Wątek %d - ack] otrzymał wiadomość od  %d.  [zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
 
         receivedClock = msg[0];
         receivedWeight = msg[1];
@@ -291,13 +291,20 @@ void* receiveAndSendAck(void* arg)
 
             if(success)
             {
+				printf("[Wątek %d - ack] ACK probuje wybudzić wątek :D [zegar = %d]\n", dane->rank, clockLamport);
+
                 pthread_cond_signal(&cond); // Should wake up *one* thread
             }
         }
         else if(status.MPI_TAG == TAG_RELEASE)
         {
-			pthread_mutex_lock(&mutexCond);
 			printf("[Wątek %d - ack] usuwa z kolejki zgłoszenie %d.[zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
+
+			pthread_mutex_lock(&mutexClock);
+            dane->head = delete(dane->head, status.MPI_SOURCE);
+            pthread_mutex_unlock(&mutexClock);
+			
+			pthread_mutex_lock(&mutexCond);
 			
 			int success = 1;
             for (int i = 0; i< dane->size; i++)
@@ -318,12 +325,12 @@ void* receiveAndSendAck(void* arg)
 				
 
 			
-            pthread_mutex_lock(&mutexClock);
-            dane->head = delete(dane->head, status.MPI_SOURCE);
-            pthread_mutex_unlock(&mutexClock);
+
 			
 			if(success)
             {
+				printf("[Wątek %d - ack] RELEASE probuje wybudzić wątek :D [zegar = %d]\n", dane->rank, clockLamport);
+
                 pthread_cond_signal(&cond); // Should wake up *one* thread
             }
         }
@@ -388,6 +395,8 @@ void* mainSkiThread(void* arg)
             }
             else
             {
+				printf("[Wątek %d - main] zasypiam sobie... zzz... [zegar = %d]\n", dane->rank, clockLamport);
+
                 pthread_cond_wait(&cond, &mutexCond);
             }
 
