@@ -232,25 +232,20 @@ void* receiveAndSendAck(void* arg)
 
 		receivedClock = msg[0];
 		receivedWeight = msg[1];
-		// semafor  P
-		pthread_mutex_lock(&mutexClock);
-
-		clockLamport = (clockLamport > receivedClock) ? clockLamport : receivedClock;
-		clockLamport += 1;
-		// semafor V
-		pthread_mutex_unlock(&mutexClock);
-
 
 		// wstaw do kolejki
 		if (status.MPI_TAG == TAG_REQ)
 		{
-			printf("[Wątek %d - ack] wstawia do kolejki zgłoszenie %d. [zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
-
 			pthread_mutex_lock(&mutexClock);
+
+			clockLamport = (clockLamport > receivedClock) ? clockLamport : receivedClock;
+			clockLamport += 1;
+
+			printf("[Wątek %d - ack] wstawia do kolejki zgłoszenie %d. [zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
 			dane->head = insert(dane->head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
 			printf("[wątek %d] moja kolejka to: [zegar = %d]\n", dane->rank, clockLamport);
 			print(dane->head);
-			clockLamport += 1;
+
 			msg[0] = clockLamport;
 			msg[1] = -1;
 			MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);
@@ -259,7 +254,6 @@ void* receiveAndSendAck(void* arg)
 		else if (status.MPI_TAG == TAG_ACK)
 		{
 			printf("[Wątek %d - ack] ustawia w tablicy ack od  %d. [zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
-
 
 			pthread_mutex_lock(&mutexClock);
 			dane->tab_ack[status.MPI_SOURCE] = 1;
@@ -337,12 +331,10 @@ void* receiveAndSendAck(void* arg)
 void* mainSkiThread(void* arg)
 {
 
-
 	while (!stop)
 	{
 		int msg[MSG_SIZE];
 		struct data* dane = (struct data*)arg;
-
 
 		int i;
 		int receivedClock, receivedStatus;
@@ -351,7 +343,7 @@ void* mainSkiThread(void* arg)
 		clockLamport += 1;
 		msg[0] = clockLamport;
 		msg[1] = dane->myWeight;
-		printf("[Wątek %d - main] wysłała do wsyztskich request. [zegar = %d]\n", dane->rank, clockLamport);
+		printf("[Wątek %d - main] wysłała do wszystkich request. [zegar = %d]\n", dane->rank, clockLamport);
 
 		for (i = 0; i < dane->size; i++)
 		{
@@ -405,22 +397,21 @@ void* mainSkiThread(void* arg)
 
 		printf("[Wątek %d - main] wszytskie wątki odebrały moją wiadomość wiadomości. [zegar = %d] Pozdrawiam, watek %d\n", dane->rank, clockLamport, dane->rank);
 
-		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry. [zegar = %d]\n", dane->rank, clockLamport);
-		// wyzerowanie ACK
+		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry. SEKCJA KRYTYCZNA [zegar = %d]\n", dane->rank, clockLamport);
+		// wyzerowanie ACK- mutex niepotrzebny, bo póki nie wyślę nowego REQUESTA, to nikt nie odpowie ACK
 		for (i = 0; i < dane->size; i++)
 		{
 			dane->tab_ack[i] = 0;
 		}
 		dane->tab_ack[dane->rank] = 1; //set ack to 1 from yourself
-									   // GO!
+		// GO!
 		printf("\n[Wątek %d - main] wjeżdzam do góry przez %d sekund [zegar = %d]\n\n", dane->rank, GOUPTIME, clockLamport);
 		sleep(GOUPTIME);
 
 		// send RELEASE
 		pthread_mutex_lock(&mutexClock);
-		clockLamport += 1;
 		msg[0] = clockLamport;
-
+		printf("\n[Wątek %d - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = %d]\n\n", dane->rank, clockLamport);
 
 		for (i = 0; i < dane->size; i++)
 		{
