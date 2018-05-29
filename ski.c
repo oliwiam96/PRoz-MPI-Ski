@@ -9,7 +9,7 @@
 #define TAG_REQ 123
 #define TAG_ACK 456
 #define TAG_RELEASE 789
-#define Capacity 1000
+#define Capacity 100
 #define GOUPTIME 5
 
 //	TODO WHO IS GONNA RECEIVE A RELEASE MSG?!
@@ -200,7 +200,7 @@ int checkWeights(queue_el *head, int myId)
         sum = sum + current->weight;
         current = current->next;
     }
-    return sum <= Capacity;
+    return sum;
 }
 
 queue_el * new_element(int id, int time, int weight)
@@ -261,7 +261,7 @@ void* receiveAndSendAck(void* arg)
         {
 			printf("[Wątek %d - ack] ustawia w tablicy ack od  %d. [zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
 
-
+			
             pthread_mutex_lock(&mutexCond);
             dane->tab_ack[status.MPI_SOURCE] = 1;
 			
@@ -284,6 +284,9 @@ void* receiveAndSendAck(void* arg)
                     break;
                 }
             }
+			if (( checkWeights(dane->head, dane->rank) + dane->myWeight) > Capacity){
+				success = 0;
+			}
 			pthread_mutex_unlock(&mutexCond);
 
             if(success)
@@ -293,11 +296,36 @@ void* receiveAndSendAck(void* arg)
         }
         else if(status.MPI_TAG == TAG_RELEASE)
         {
+			pthread_mutex_lock(&mutexCond);
 			printf("[Wątek %d - ack] usuwa z kolejki zgłoszenie %d.[zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
+			
+			int success = 1;
+            for (int i = 0; i< dane->size; i++)
+            {
+                if (dane->tab_ack[i] != 1)
+                {
+                    success = 0;
+                    break;
+                }
+            }
+			
+			printf("[Wątek %d - ack] Suma wag: %d .[zegar = %d]\n", dane->rank, checkWeights(dane->head, dane->rank), clockLamport);
 
+			if ( (checkWeights(dane->head, dane->rank) + dane->myWeight) > Capacity){
+				success = 0;
+			}
+			pthread_mutex_unlock(&mutexCond);
+				
+
+			
             pthread_mutex_lock(&mutexClock);
             dane->head = delete(dane->head, status.MPI_SOURCE);
             pthread_mutex_unlock(&mutexClock);
+			
+			if(success)
+            {
+                pthread_cond_signal(&cond); // Should wake up *one* thread
+            }
         }
 
 
