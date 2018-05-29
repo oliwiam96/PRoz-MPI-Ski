@@ -276,7 +276,8 @@ void* receiveAndSendAck(void* arg)
 			
 			
             int success = 1;
-            for (int i = 0; i< dane->size; i++)
+			int i;
+            for (i = 0; i< dane->size; i++)
             {
                 if (dane->tab_ack[i] != 1)
                 {
@@ -307,7 +308,8 @@ void* receiveAndSendAck(void* arg)
 			pthread_mutex_lock(&mutexCond);
 			
 			int success = 1;
-            for (int i = 0; i< dane->size; i++)
+			int i;
+            for (i = 0; i< dane->size; i++)
             {
                 if (dane->tab_ack[i] != 1)
                 {
@@ -381,7 +383,8 @@ void* mainSkiThread(void* arg)
         do
         {
             int success = 1;
-            for (int i = 0; i< dane->size; i++)
+			int i;
+            for (i = 0; i< dane->size; i++)
             {
                 if (dane->tab_ack[i] != 1)
                 {
@@ -411,7 +414,7 @@ void* mainSkiThread(void* arg)
 
 		printf("[Wątek %d - main] wyzerowuje tablice ack i wejeżdza do góry. [zegar = %d]\n", dane->rank, clockLamport);
         // wyzerowanie ACK
-        for (int i = 0; i < dane->size; i++)
+        for (i = 0; i < dane->size; i++)
         {
             dane->tab_ack[i] = 0;
         }
@@ -482,7 +485,8 @@ int main(int argc, char **argv)
 	srand(rank);
     dane.myWeight = 70 + (30 - (rand() % 60));
     dane.tab_ack = malloc(dane.size*sizeof(int));
-    for (int i = 0; i < dane.size; i++)
+	int i;
+    for (i = 0; i < dane.size; i++)
     {
         dane.tab_ack[i] = 0;
     }
