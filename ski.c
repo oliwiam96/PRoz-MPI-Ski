@@ -9,7 +9,7 @@
 #define TAG_REQ 123
 #define TAG_ACK 456
 #define TAG_RELEASE 789
-#define Capacity 100
+#define Capacity 170
 #define GOUPTIME 5
 
 //	TODO WHO IS GONNA RECEIVE A RELEASE MSG?!
@@ -249,7 +249,7 @@ void* receiveAndSendAck(void* arg)
 
             pthread_mutex_lock(&mutexClock);
             dane->head = insert(dane->head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
-			printf("[wątek %d] moja kolejka to: ", dane->rank);
+			printf("[wątek %d] moja kolejka to: [zegar = %d]\n", dane->rank, clockLamport);
 			print(dane->head);
             clockLamport += 1;
             msg[0] = clockLamport;
@@ -417,7 +417,7 @@ void* mainSkiThread(void* arg)
         }
 		dane->tab_ack[dane->rank] = 1; //set ack to 1 from yourself
         // GO!
-		printf("[Wątek %d - main] wjeżdzam do góry przez %d sekund [zegar = %d]\n", dane->rank, GOUPTIME, clockLamport);
+		printf("\n[Wątek %d - main] wjeżdzam do góry przez %d sekund [zegar = %d]\n\n", dane->rank, GOUPTIME, clockLamport);
         sleep(GOUPTIME);
 
         // send RELEASE
