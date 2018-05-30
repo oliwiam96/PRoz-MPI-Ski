@@ -289,10 +289,15 @@ void* receiveAndSendAck(void* arg)
 		}
 		else if (status.MPI_TAG == TAG_RELEASE)
 		{
-			printf("[Wątek %d - ack] usuwa z kolejki zgłoszenie %d.[zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
-
 			pthread_mutex_lock(&mutexClock);
+			printf("[Wątek %d - ack] usuwa z kolejki zgłoszenie %d.[zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
+			printf("[wątek %d] moja kolejka PRZED USUNIECIEM to: [zegar = %d]\n", dane->rank, clockLamport);
+			print(dane->head);
+
+			
 			dane->head = delete(dane->head, status.MPI_SOURCE);
+			printf("[wątek %d] moja kolejka PO USUNIECIU to: [zegar = %d]\n", dane->rank, clockLamport);
+			print(dane->head);
 
 			int success = 1;
 			int i;
@@ -421,9 +426,13 @@ void* mainSkiThread(void* arg)
 
 		// sleep random przy zjeździe
 		printf("[Wątek %d - main] usuwa swoje zgłoszenie ze swojej kolejki. [zegar = %d]\n", dane->rank, clockLamport);
+		printf("[wątek %d] moja kolejka PRZED USUNIECIEM to: [zegar = %d]\n", dane->rank, clockLamport);
+			print(dane->head);
 
 		//  usun swoje zadanie z kolejki
 		dane->head = delete(dane->head, dane->rank);
+printf("[wątek %d] moja kolejka PO USUNIECIU to: [zegar = %d]\n", dane->rank, clockLamport);
+			print(dane->head);
 		pthread_mutex_unlock(&mutexClock);
 
 		int randomTime = 8 - (rand() % 7);

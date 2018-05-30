@@ -1,0 +1,200 @@
+Full support for multiple threads!
+Full support for multiple threads!
+Wątek 2 zainicjował zmienne (waga = 70) i rozpocząl działnie.
+Wątek 0 zainicjował zmienne (waga = 57) i rozpocząl działnie.
+Wątek 1 zainicjował zmienne (waga = 57) i rozpocząl działnie.
+[Wątek 1 - main] wysłała do wszystkich request. [zegar = 1]
+[Wątek 1 - main] wstawił do swojej kolejki swój request. [zegar = 1]
+[Wątek 1 - main] sprawdza czy wszytskie wątki odebrały wiadomości. [zegar = 1]
+[Wątek 1 - main] zasypiam sobie... zzz... [zegar = 1]
+[Wątek 0 - main] wysłała do wszystkich request. [zegar = 1]
+[Wątek 0 - main] wstawił do swojej kolejki swój request. [zegar = 1]
+[Wątek 1 - ack] otrzymał wiadomość od  0 o TAGU: 123.  [zegar z wiadomosci = 0]
+[Wątek 0 - main] sprawdza czy wszytskie wątki odebrały wiadomości. [zegar = 1]
+[Wątek 0 - main] zasypiam sobie... zzz... [zegar = 1]
+[Wątek 1 - ack] wstawia do kolejki zgłoszenie 0. [zegar = 2]
+[wątek 1] moja kolejka to: [zegar = 2]
+id: 0 time: 1;	id: 1 time: 1;	
+[Wątek 0 - ack] otrzymał wiadomość od  1 o TAGU: 123.  [zegar z wiadomosci = 0]
+[Wątek 0 - ack] wstawia do kolejki zgłoszenie 1. [zegar = 2]
+[wątek 0] moja kolejka to: [zegar = 2]
+id: 0 time: 1;	id: 1 time: 1;	
+[Wątek 0 - ack] otrzymał wiadomość od  1 o TAGU: 456.  [zegar z wiadomosci = 1]
+[Wątek 0 - ack] ustawia w tablicy ack od  1. [zegar = 2]
+Tab_ack: [ 1, 1, 0]
+[Wątek 2 - ack] otrzymał wiadomość od  1 o TAGU: 123.  [zegar z wiadomosci = 0]
+[Wątek 2 - ack] wstawia do kolejki zgłoszenie 1. [zegar = 2]
+[wątek 2] moja kolejka to: [zegar = 2]
+id: 1 time: 1;	
+[Wątek 2 - ack] otrzymał wiadomość od  0 o TAGU: 123.  [zegar z wiadomosci = 1]
+[Wątek 2 - ack] wstawia do kolejki zgłoszenie 0. [zegar = 3]
+[wątek 2] moja kolejka to: [zegar = 3]
+id: 0 time: 1;	id: 1 time: 1;	
+[Wątek 0 - ack] otrzymał wiadomość od  2 o TAGU: 456.  [zegar z wiadomosci = 2]
+[Wątek 0 - ack] ustawia w tablicy ack od  2. [zegar = 2]
+Tab_ack: [ 1, 1, 1]
+[Wątek 0 - ack] ACK probuje wybudzić wątek :D [zegar = 2]
+[Wątek 0 - main] wszytskie wątki odebrały moją wiadomość wiadomości. [zegar = 2] Pozdrawiam, watek 0
+[Wątek 0 - main] wyzerowuje tablice ack i wejeżdza do góry. SEKCJA KRYTYCZNA [zegar = 2]
+
+[Wątek 0 - main] wjeżdzam do góry przez 10 sekund [zegar = 2]
+
+[Wątek 1 - ack] otrzymał wiadomość od  0 o TAGU: 456.  [zegar z wiadomosci = 1]
+[Wątek 1 - ack] ustawia w tablicy ack od  0. [zegar = 2]
+Tab_ack: [ 1, 1, 0]
+[Wątek 1 - ack] otrzymał wiadomość od  2 o TAGU: 456.  [zegar z wiadomosci = 2]
+[Wątek 1 - ack] ustawia w tablicy ack od  2. [zegar = 2]
+Tab_ack: [ 1, 1, 1]
+[Wątek 1 - ack] ACK probuje wybudzić wątek :D [zegar = 2]
+[Wątek 2 - main] wysłała do wszystkich request. [zegar = 4]
+[Wątek 1 - main] wszytskie wątki odebrały moją wiadomość wiadomości. [zegar = 2] Pozdrawiam, watek 1
+[Wątek 1 - main] wyzerowuje tablice ack i wejeżdza do góry. SEKCJA KRYTYCZNA [zegar = 2]
+
+[Wątek 1 - main] wjeżdzam do góry przez 10 sekund [zegar = 2]
+
+[Wątek 2 - main] wstawił do swojej kolejki swój request. [zegar = 4]
+[Wątek 2 - main] sprawdza czy wszytskie wątki odebrały wiadomości. [zegar = 4]
+[Wątek 2 - main] zasypiam sobie... zzz... [zegar = 4]
+[Wątek 1 - ack] otrzymał wiadomość od  2 o TAGU: 123.  [zegar z wiadomosci = 2]
+[Wątek 1 - ack] wstawia do kolejki zgłoszenie 2. [zegar = 5]
+[wątek 1] moja kolejka to: [zegar = 5]
+id: 0 time: 1;	id: 1 time: 1;	id: 2 time: 4;	
+[Wątek 0 - ack] otrzymał wiadomość od  2 o TAGU: 123.  [zegar z wiadomosci = 3]
+[Wątek 0 - ack] wstawia do kolejki zgłoszenie 2. [zegar = 5]
+[wątek 0] moja kolejka to: [zegar = 5]
+id: 0 time: 1;	id: 1 time: 1;	id: 2 time: 4;	
+[Wątek 2 - ack] otrzymał wiadomość od  1 o TAGU: 456.  [zegar z wiadomosci = 1]
+[Wątek 2 - ack] ustawia w tablicy ack od  1. [zegar = 4]
+Tab_ack: [ 0, 1, 1]
+[Wątek 2 - ack] otrzymał wiadomość od  0 o TAGU: 456.  [zegar z wiadomosci = 5]
+[Wątek 2 - ack] ustawia w tablicy ack od  0. [zegar = 4]
+Tab_ack: [ 1, 1, 1]
+
+[Wątek 0 - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = 5]
+
+[Wątek 0 - main] wysyłał release synał do wszystkich i zjeżdża na dół. [zegar = 5]
+[Wątek 0 - main] usuwa swoje zgłoszenie ze swojej kolejki. [zegar = 5]
+[wątek 0] moja kolejka PRZED USUNIECIEM to: [zegar = 5]
+id: 0 time: 1;	id: 1 time: 1;	id: 2 time: 4;	
+[wątek 0] moja kolejka PO USUNIECIU to: [zegar = 5]
+
+[Wątek 0 - main] zjedża z góry przez 4 sekund................ [zegar = 5]
+[Wątek 1 - ack] otrzymał wiadomość od  0 o TAGU: 789.  [zegar z wiadomosci = 4]
+[Wątek 1 - ack] usuwa z kolejki zgłoszenie 0.[zegar = 5]
+[wątek 1] moja kolejka PRZED USUNIECIEM to: [zegar = 5]
+id: 0 time: 1;	id: 1 time: 1;	id: 2 time: 4;	
+[wątek 1] moja kolejka PO USUNIECIU to: [zegar = 5]
+
+[Wątek 1 - ack] Suma wag: 0 .[zegar = 5]
+
+[Wątek 1 - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = 5]
+
+[Wątek 1 - main] wysyłał release synał do wszystkich i zjeżdża na dół. [zegar = 5]
+[Wątek 1 - main] usuwa swoje zgłoszenie ze swojej kolejki. [zegar = 5]
+[wątek 1] moja kolejka PRZED USUNIECIEM to: [zegar = 5]
+
+[wątek 1] moja kolejka PO USUNIECIU to: [zegar = 5]
+
+[Wątek 1 - main] zjedża z góry przez 4 sekund................ [zegar = 5]
+[Wątek 2 - ack] otrzymał wiadomość od  0 o TAGU: 789.  [zegar z wiadomosci = 5]
+[Wątek 2 - ack] usuwa z kolejki zgłoszenie 0.[zegar = 4]
+[wątek 2] moja kolejka PRZED USUNIECIEM to: [zegar = 4]
+id: 0 time: 1;	id: 1 time: 1;	id: 2 time: 4;	
+[wątek 2] moja kolejka PO USUNIECIU to: [zegar = 4]
+
+[Wątek 2 - ack] Suma wag: 0 .[zegar = 4]
+[Wątek 2 - ack] RELEASE probuje wybudzić wątek :D [zegar = 4]
+[Wątek 2 - main] wszytskie wątki odebrały moją wiadomość wiadomości. [zegar = 4] Pozdrawiam, watek 2
+[Wątek 2 - main] wyzerowuje tablice ack i wejeżdza do góry. SEKCJA KRYTYCZNA [zegar = 4]
+
+[Wątek 2 - main] wjeżdzam do góry przez 10 sekund [zegar = 4]
+
+[Wątek 2 - ack] otrzymał wiadomość od  1 o TAGU: 789.  [zegar z wiadomosci = 5]
+[Wątek 2 - ack] usuwa z kolejki zgłoszenie 1.[zegar = 4]
+[wątek 2] moja kolejka PRZED USUNIECIEM to: [zegar = 4]
+
+[wątek 2] moja kolejka PO USUNIECIU to: [zegar = 4]
+
+[Wątek 2 - ack] Suma wag: 0 .[zegar = 4]
+[Wątek 0 - ack] otrzymał wiadomość od  1 o TAGU: 789.  [zegar z wiadomosci = 4]
+[Wątek 0 - ack] usuwa z kolejki zgłoszenie 1.[zegar = 5]
+[wątek 0] moja kolejka PRZED USUNIECIEM to: [zegar = 5]
+
+[wątek 0] moja kolejka PO USUNIECIU to: [zegar = 5]
+
+[Wątek 0 - ack] Suma wag: 0 .[zegar = 5]
+[Wątek 0 - main] zjechał i znowy  ustawia się do kolejki narciarzy. [zegar = 5]
+[Wątek 0 - main] wysłała do wszystkich request. [zegar = 6]
+[Wątek 0 - main] wstawił do swojej kolejki swój request. [zegar = 6]
+[Wątek 0 - main] sprawdza czy wszytskie wątki odebrały wiadomości. [zegar = 6]
+[Wątek 0 - main] zasypiam sobie... zzz... [zegar = 6]
+[Wątek 1 - ack] otrzymał wiadomość od  0 o TAGU: 123.  [zegar z wiadomosci = 5]
+[Wątek 1 - ack] wstawia do kolejki zgłoszenie 0. [zegar = 7]
+[wątek 1] moja kolejka to: [zegar = 7]
+id: 0 time: 6;	
+[Wątek 1 - main] zjechał i znowy  ustawia się do kolejki narciarzy. [zegar = 7]
+[Wątek 1 - main] wysłała do wszystkich request. [zegar = 8]
+[Wątek 1 - main] wstawił do swojej kolejki swój request. [zegar = 8]
+[Wątek 1 - main] sprawdza czy wszytskie wątki odebrały wiadomości. [zegar = 8]
+[Wątek 1 - main] zasypiam sobie... zzz... [zegar = 8]
+[Wątek 0 - ack] otrzymał wiadomość od  1 o TAGU: 456.  [zegar z wiadomosci = 5]
+[Wątek 0 - ack] ustawia w tablicy ack od  1. [zegar = 6]
+Tab_ack: [ 1, 1, 0]
+[Wątek 0 - ack] otrzymał wiadomość od  1 o TAGU: 123.  [zegar z wiadomosci = 7]
+[Wątek 0 - ack] wstawia do kolejki zgłoszenie 1. [zegar = 9]
+[wątek 0] moja kolejka to: [zegar = 9]
+id: 0 time: 6;	id: 1 time: 8;	
+[Wątek 2 - ack] otrzymał wiadomość od  0 o TAGU: 123.  [zegar z wiadomosci = 5]
+[Wątek 2 - ack] wstawia do kolejki zgłoszenie 0. [zegar = 7]
+[wątek 2] moja kolejka to: [zegar = 7]
+id: 0 time: 6;	
+[Wątek 2 - ack] otrzymał wiadomość od  1 o TAGU: 123.  [zegar z wiadomosci = 6]
+[Wątek 2 - ack] wstawia do kolejki zgłoszenie 1. [zegar = 9]
+[wątek 2] moja kolejka to: [zegar = 9]
+id: 0 time: 6;	id: 1 time: 8;	
+[Wątek 1 - ack] otrzymał wiadomość od  0 o TAGU: 456.  [zegar z wiadomosci = 6]
+[Wątek 1 - ack] ustawia w tablicy ack od  0. [zegar = 8]
+Tab_ack: [ 1, 1, 0]
+[Wątek 1 - ack] otrzymał wiadomość od  2 o TAGU: 456.  [zegar z wiadomosci = 9]
+[Wątek 1 - ack] ustawia w tablicy ack od  2. [zegar = 8]
+Tab_ack: [ 1, 1, 1]
+[Wątek 1 - ack] ACK probuje wybudzić wątek :D [zegar = 8]
+[Wątek 1 - main] wszytskie wątki odebrały moją wiadomość wiadomości. [zegar = 8] Pozdrawiam, watek 1
+[Wątek 1 - main] wyzerowuje tablice ack i wejeżdza do góry. SEKCJA KRYTYCZNA [zegar = 8]
+
+[Wątek 1 - main] wjeżdzam do góry przez 10 sekund [zegar = 8]
+
+[Wątek 0 - ack] otrzymał wiadomość od  2 o TAGU: 456.  [zegar z wiadomosci = 8]
+[Wątek 0 - ack] ustawia w tablicy ack od  2. [zegar = 9]
+Tab_ack: [ 1, 1, 1]
+[Wątek 0 - ack] ACK probuje wybudzić wątek :D [zegar = 9]
+[Wątek 0 - main] wszytskie wątki odebrały moją wiadomość wiadomości. [zegar = 9] Pozdrawiam, watek 0
+[Wątek 0 - main] wyzerowuje tablice ack i wejeżdza do góry. SEKCJA KRYTYCZNA [zegar = 9]
+
+[Wątek 0 - main] wjeżdzam do góry przez 10 sekund [zegar = 9]
+
+
+[Wątek 2 - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = 9]
+
+[Wątek 2 - main] wysyłał release synał do wszystkich i zjeżdża na dół. [zegar = 9]
+[Wątek 2 - main] usuwa swoje zgłoszenie ze swojej kolejki. [zegar = 9]
+[wątek 2] moja kolejka PRZED USUNIECIEM to: [zegar = 9]
+id: 0 time: 6;	id: 1 time: 8;	
+[wątek 2] moja kolejka PO USUNIECIU to: [zegar = 9]
+id: 0 time: 6;	id: 1 time: 8;	
+[Wątek 2 - main] zjedża z góry przez 4 sekund................ [zegar = 9]
+[Wątek 1 - ack] otrzymał wiadomość od  2 o TAGU: 789.  [zegar z wiadomosci = 9]
+[Wątek 1 - ack] usuwa z kolejki zgłoszenie 2.[zegar = 8]
+[wątek 1] moja kolejka PRZED USUNIECIEM to: [zegar = 8]
+id: 0 time: 6;	id: 1 time: 8;	
+[wątek 1] moja kolejka PO USUNIECIU to: [zegar = 8]
+id: 0 time: 6;	id: 1 time: 8;	
+[Wątek 1 - ack] Suma wag: 57 .[zegar = 8]
+[Wątek 0 - ack] otrzymał wiadomość od  2 o TAGU: 789.  [zegar z wiadomosci = 7]
+[Wątek 0 - ack] usuwa z kolejki zgłoszenie 2.[zegar = 9]
+[wątek 0] moja kolejka PRZED USUNIECIEM to: [zegar = 9]
+id: 0 time: 6;	id: 1 time: 8;	
+[wątek 0] moja kolejka PO USUNIECIU to: [zegar = 9]
+id: 0 time: 6;	id: 1 time: 8;	
+[Wątek 0 - ack] Suma wag: 0 .[zegar = 9]
+
