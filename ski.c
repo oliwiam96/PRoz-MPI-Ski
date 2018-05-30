@@ -9,12 +9,8 @@
 #define TAG_REQ 123
 #define TAG_ACK 456
 #define TAG_RELEASE 789
-#define Capacity 100
-#define GOUPTIME 5
-
-//	TODO WHO IS GONNA RECEIVE A RELEASE MSG?!
-
-
+#define Capacity 150
+#define GOUPTIME 10
 
 int clockLamport = 0;
 int stop = 0;
@@ -185,9 +181,10 @@ void print(queue_el *head)
 
 	while (current != NULL)
 	{
-		printf("id: %d time: %d\n", current->id, current->time);
+		printf("id: %d time: %d;\t", current->id, current->time);
 		current = current->next;
 	}
+	printf("\n");
 }
 int checkWeights(queue_el *head, int myId)
 {
@@ -228,7 +225,7 @@ void* receiveAndSendAck(void* arg)
 
 
 		MPI_Recv(msg, MSG_SIZE, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		printf("[Wątek %d - ack] otrzymał wiadomość od  %d.  [zegar = %d]\n", dane->rank, status.MPI_SOURCE, clockLamport);
+		printf("[Wątek %d - ack] otrzymał wiadomość od  %d o TAGU: %d.  [zegar z wiadomosci = %d]\n", dane->rank, status.MPI_SOURCE, status.MPI_TAG, receivedClock);
 
 		receivedClock = msg[0];
 		receivedWeight = msg[1];
@@ -429,7 +426,7 @@ void* mainSkiThread(void* arg)
 		dane->head = delete(dane->head, dane->rank);
 		pthread_mutex_unlock(&mutexClock);
 
-		int randomTime = 10 - (rand() % 7);
+		int randomTime = 8 - (rand() % 7);
 		printf("[Wątek %d - main] zjedża z góry przez %d sekund................ [zegar = %d]\n", dane->rank, randomTime, clockLamport);
 		sleep(randomTime); // czy to jest potzrebne?
 		printf("[Wątek %d - main] zjechał i znowy  ustawia się do kolejki narciarzy. [zegar = %d]\n", dane->rank, clockLamport);
