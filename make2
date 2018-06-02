@@ -1,0 +1,1 @@
+mpic++ -pthread ski2.cpp -o ski2

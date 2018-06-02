@@ -1,0 +1,201 @@
+Full support for multiple threads!
+W¹tek 2 zainicjowa³ zmienne (waga = 70) i rozpocz¹l dzia³nie.
+Full support for multiple threads!
+W¹tek 0 zainicjowa³ zmienne (waga = 57) i rozpocz¹l dzia³nie.
+[W¹tek 0 - main] wys³a³a do wszystkich request. [zegar = 1]
+Full support for multiple threads!
+W¹tek 1 zainicjowa³ zmienne (waga = 57) i rozpocz¹l dzia³nie.
+[W¹tek 1 - main] wys³a³a do wszystkich request. [zegar = 1]
+[W¹tek 2 - main] wys³a³a do wszystkich request. [zegar = 1]
+[W¹tek 0 - main] wstawi³ do swojej kolejki swój request. [zegar = 1]
+[W¹tek 0 - main] sprawdza czy wszytskie w¹tki odebra³y wiadomoœci. [zegar = 1]
+[W¹tek 0 - main] zasypiam sobie... zzz... [zegar = 1]
+[W¹tek 1 - main] wstawi³ do swojej kolejki swój request. [zegar = 1]
+[W¹tek 1 - main] sprawdza czy wszytskie w¹tki odebra³y wiadomoœci. [zegar = 1]
+[W¹tek 1 - main] zasypiam sobie... zzz... [zegar = 1]
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 123.  [zegar z wiadomosci = 0]
+[W¹tek 0 - ack] wstawia do kolejki zg³oszenie 1. [zegar = 2]
+[Watek 0; zegar 2] KOLEJKA: id: 0 time: 1 weight: 57;   id: 1 time: 1 weight: 57;       KONIEC KOLEJKI
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 123.  [zegar z wiadomosci = 1]
+[W¹tek 0 - ack] wstawia do kolejki zg³oszenie 2. [zegar = 3]
+[Watek 0; zegar 3] KOLEJKA: id: 0 time: 1 weight: 57;   id: 1 time: 1 weight: 57;       id: 2 time: 1 weight: 70;       KONIEC KOLEJKI
+[W¹tek 2 - main] wstawi³ do swojej kolejki swój request. [zegar = 1]
+[W¹tek 2 - main] sprawdza czy wszytskie w¹tki odebra³y wiadomoœci. [zegar = 1]
+[W¹tek 2 - main] zasypiam sobie... zzz... [zegar = 1]
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 123.  [zegar z wiadomosci = 0]
+[W¹tek 1 - ack] wstawia do kolejki zg³oszenie 0. [zegar = 2]
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 123.  [zegar z wiadomosci = 0]
+[W¹tek 2 - ack] wstawia do kolejki zg³oszenie 0. [zegar = 2]
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 456.  [zegar z wiadomosci = 1]
+[W¹tek 0 - ack] ustawia w tablicy ack od  2. [zegar = 3]
+Tab_ack: [ 1, 0, 1]
+[Watek 2; zegar 2] KOLEJKA: id: 0 time: 1 weight: 57;   id: 2 time: 1 weight: 70;       KONIEC KOLEJKI
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 123.  [zegar z wiadomosci = 1]
+[W¹tek 2 - ack] wstawia do kolejki zg³oszenie 1. [zegar = 3]
+[Watek 2; zegar 3] KOLEJKA: id: 0 time: 1 weight: 57;   id: 1 time: 1 weight: 57;       id: 2 time: 1 weight: 70;       KONIEC KOLEJKI
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 456.  [zegar z wiadomosci = 1]
+[W¹tek 2 - ack] ustawia w tablicy ack od  0. [zegar = 3]
+Tab_ack: [ 1, 0, 1]
+[Watek 1; zegar 2] KOLEJKA: id: 0 time: 1 weight: 57;   id: 1 time: 1 weight: 57;       KONIEC KOLEJKI
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 123.  [zegar z wiadomosci = 1]
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 456.  [zegar z wiadomosci = 2]
+[W¹tek 0 - ack] ustawia w tablicy ack od  1. [zegar = 3]
+Tab_ack: [ 1, 1, 1]
+[W¹tek 0 - ack] ACK probuje wybudziæ w¹tek :D [zegar = 3]
+[W¹tek 1 - ack] wstawia do kolejki zg³oszenie 2. [zegar = 3]
+[Watek 1; zegar 3] KOLEJKA: id: 0 time: 1 weight: 57;   id: 1 time: 1 weight: 57;       id: 2 time: 1 weight: 70;       KONIEC KOLEJKI
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 456.  [zegar z wiadomosci = 3]
+[W¹tek 2 - ack] ustawia w tablicy ack od  1. [zegar = 3]
+Tab_ack: [ 1, 1, 1]
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 456.  [zegar z wiadomosci = 1]
+[W¹tek 1 - ack] ustawia w tablicy ack od  0. [zegar = 3]
+Tab_ack: [ 1, 1, 0]
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 456.  [zegar z wiadomosci = 2]
+[W¹tek 1 - ack] ustawia w tablicy ack od  2. [zegar = 3]
+Tab_ack: [ 1, 1, 1]
+[W¹tek 1 - ack] ACK probuje wybudziæ w¹tek :D [zegar = 3]
+[W¹tek 0 - main] wszytskie w¹tki odebra³y moj¹ wiadomoœæ wiadomoœci. [zegar = 3] Pozdrawiam, watek 0
+[W¹tek 0 - main] wyzerowuje tablice ack i weje¿dza do góry. SEKCJA KRYTYCZNA [zegar = 3]
+
+[W¹tek 0 - main] wje¿dzam do góry przez 5 sekund [zegar = 3]
+
+[W¹tek 1 - main] wszytskie w¹tki odebra³y moj¹ wiadomoœæ wiadomoœci. [zegar = 3] Pozdrawiam, watek 1
+[W¹tek 1 - main] wyzerowuje tablice ack i weje¿dza do góry. SEKCJA KRYTYCZNA [zegar = 3]
+
+[W¹tek 1 - main] wje¿dzam do góry przez 5 sekund [zegar = 3]
+
+
+[W¹tek 0 - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = 3]
+
+[W¹tek 0 - main] wysy³a³ release syna³ do wszystkich i zje¿d¿a na dó³. [zegar = 3]
+[W¹tek 0 - main] usuwa swoje zg³oszenie ze swojej kolejki. [zegar = 3]
+[W¹tek 0 - main] zjed¿a z góry przez 4 sekund................ [zegar = 3]
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 789.  [zegar z wiadomosci = 3]
+[W¹tek 2 - ack] usuwa z kolejki zg³oszenie 0.[zegar = 3]
+[W¹tek 2 - ack] Suma wag: 57 .[zegar = 3]
+[W¹tek 2 - ack] RELEASE probuje wybudziæ w¹tek :D [zegar = 3]
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 789.  [zegar z wiadomosci = 3]
+[W¹tek 1 - ack] usuwa z kolejki zg³oszenie 0.[zegar = 3]
+[W¹tek 1 - ack] Suma wag: 0 .[zegar = 3]
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 789.  [zegar z wiadomosci = 2]
+[W¹tek 0 - ack] usuwa z kolejki zg³oszenie 1.[zegar = 3]
+[W¹tek 0 - ack] Suma wag: 70 .[zegar = 3]
+
+[W¹tek 1 - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = 3]
+
+[W¹tek 1 - main] wysy³a³ release syna³ do wszystkich i zje¿d¿a na dó³. [zegar = 3]
+[W¹tek 1 - main] usuwa swoje zg³oszenie ze swojej kolejki. [zegar = 3]
+[W¹tek 1 - main] zjed¿a z góry przez 4 sekund................ [zegar = 3]
+[W¹tek 2 - main] wszytskie w¹tki odebra³y moj¹ wiadomoœæ wiadomoœci. [zegar = 3] Pozdrawiam, watek 2
+[W¹tek 2 - main] wyzerowuje tablice ack i weje¿dza do góry. SEKCJA KRYTYCZNA [zegar = 3]
+
+[W¹tek 2 - main] wje¿dzam do góry przez 5 sekund [zegar = 3]
+
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 789.  [zegar z wiadomosci = 3]
+[W¹tek 2 - ack] usuwa z kolejki zg³oszenie 1.[zegar = 3]
+[W¹tek 2 - ack] Suma wag: 0 .[zegar = 3]
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 123.  [zegar z wiadomosci = 3]
+[W¹tek 1 - ack] wstawia do kolejki zg³oszenie 0. [zegar = 5]
+[Watek 1; zegar 5] KOLEJKA: id: 2 time: 1 weight: 70;   id: 0 time: 4 weight: 57;       KONIEC KOLEJKI
+[W¹tek 1 - main] zjecha³ i znowy  ustawia siê do kolejki narciarzy. [zegar = 5]
+[W¹tek 0 - main] zjecha³ i znowy  ustawia siê do kolejki narciarzy. [zegar = 3]
+[W¹tek 0 - main] wys³a³a do wszystkich request. [zegar = 4]
+[W¹tek 0 - main] wstawi³ do swojej kolejki swój request. [zegar = 4]
+[W¹tek 0 - main] sprawdza czy wszytskie w¹tki odebra³y wiadomoœci. [zegar = 4]
+[W¹tek 0 - main] zasypiam sobie... zzz... [zegar = 4]
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 456.  [zegar z wiadomosci = 3]
+[W¹tek 0 - ack] ustawia w tablicy ack od  2. [zegar = 4]
+Tab_ack: [ 1, 0, 1]
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 123.  [zegar z wiadomosci = 3]
+[W¹tek 2 - ack] wstawia do kolejki zg³oszenie 0. [zegar = 5]
+[Watek 2; zegar 5] KOLEJKA: id: 2 time: 1 weight: 70;   id: 0 time: 4 weight: 57;       KONIEC KOLEJKI
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 456.  [zegar z wiadomosci = 5]
+[W¹tek 0 - ack] ustawia w tablicy ack od  1. [zegar = 4]
+Tab_ack: [ 1, 1, 1]
+[W¹tek 0 - ack] ACK probuje wybudziæ w¹tek :D [zegar = 4]
+[W¹tek 0 - main] wszytskie w¹tki odebra³y moj¹ wiadomoœæ wiadomoœci. [zegar = 4] Pozdrawiam, watek 0
+[W¹tek 0 - main] wyzerowuje tablice ack i weje¿dza do góry. SEKCJA KRYTYCZNA [zegar = 4]
+
+[W¹tek 0 - main] wje¿dzam do góry przez 5 sekund [zegar = 4]
+
+[W¹tek 1 - main] wys³a³a do wszystkich request. [zegar = 6]
+[W¹tek 1 - main] wstawi³ do swojej kolejki swój request. [zegar = 6]
+[W¹tek 1 - main] sprawdza czy wszytskie w¹tki odebra³y wiadomoœci. [zegar = 6]
+[W¹tek 1 - main] zasypiam sobie... zzz... [zegar = 6]
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 123.  [zegar z wiadomosci = 4]
+[W¹tek 2 - ack] wstawia do kolejki zg³oszenie 1. [zegar = 7]
+[Watek 2; zegar 7] KOLEJKA: id: 2 time: 1 weight: 70;   id: 0 time: 4 weight: 57;       id: 1 time: 6 weight: 57;       KONIEC KOLEJKI
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 123.  [zegar z wiadomosci = 5]
+[W¹tek 0 - ack] wstawia do kolejki zg³oszenie 1. [zegar = 7]
+[Watek 0; zegar 7] KOLEJKA: id: 2 time: 1 weight: 70;   id: 0 time: 4 weight: 57;       id: 1 time: 6 weight: 57;       KONIEC KOLEJKI
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 456.  [zegar z wiadomosci = 4]
+[W¹tek 1 - ack] ustawia w tablicy ack od  0. [zegar = 6]
+Tab_ack: [ 1, 1, 0]
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 456.  [zegar z wiadomosci = 7]
+[W¹tek 1 - ack] ustawia w tablicy ack od  2. [zegar = 6]
+Tab_ack: [ 1, 1, 1]
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 789.  [zegar z wiadomosci = 6]
+[W¹tek 0 - ack] usuwa z kolejki zg³oszenie 2.[zegar = 7]
+[W¹tek 0 - ack] Suma wag: 0 .[zegar = 7]
+
+[W¹tek 2 - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = 7]
+
+[W¹tek 2 - main] wysy³a³ release syna³ do wszystkich i zje¿d¿a na dó³. [zegar = 7]
+[W¹tek 2 - main] usuwa swoje zg³oszenie ze swojej kolejki. [zegar = 7]
+[W¹tek 2 - main] zjed¿a z góry przez 4 sekund................ [zegar = 7]
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 789.  [zegar z wiadomosci = 7]
+[W¹tek 1 - ack] usuwa z kolejki zg³oszenie 2.[zegar = 6]
+[W¹tek 1 - ack] Suma wag: 57 .[zegar = 6]
+[W¹tek 1 - ack] RELEASE probuje wybudziæ w¹tek :D [zegar = 6]
+[W¹tek 1 - main] wszytskie w¹tki odebra³y moj¹ wiadomoœæ wiadomoœci. [zegar = 6] Pozdrawiam, watek 1
+[W¹tek 1 - main] wyzerowuje tablice ack i weje¿dza do góry. SEKCJA KRYTYCZNA [zegar = 6]
+
+[W¹tek 1 - main] wje¿dzam do góry przez 5 sekund [zegar = 6]
+
+[W¹tek 2 - main] zjecha³ i znowy  ustawia siê do kolejki narciarzy. [zegar = 7]
+[W¹tek 2 - main] wys³a³a do wszystkich request. [zegar = 8]
+[W¹tek 2 - main] wstawi³ do swojej kolejki swój request. [zegar = 8]
+[W¹tek 2 - main] sprawdza czy wszytskie w¹tki odebra³y wiadomoœci. [zegar = 8]
+[W¹tek 2 - main] zasypiam sobie... zzz... [zegar = 8]
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 789.  [zegar z wiadomosci = 6]
+[W¹tek 2 - ack] usuwa z kolejki zg³oszenie 0.[zegar = 8]
+[W¹tek 2 - ack] Suma wag: 57 .[zegar = 8]
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 456.  [zegar z wiadomosci = 7]
+[W¹tek 2 - ack] ustawia w tablicy ack od  0. [zegar = 8]
+Tab_ack: [ 1, 0, 1]
+
+[W¹tek 0 - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = 7]
+
+[W¹tek 0 - main] wysy³a³ release syna³ do wszystkich i zje¿d¿a na dó³. [zegar = 7]
+[W¹tek 0 - main] usuwa swoje zg³oszenie ze swojej kolejki. [zegar = 7]
+[W¹tek 0 - main] zjed¿a z góry przez 6 sekund................ [zegar = 7]
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 123.  [zegar z wiadomosci = 7]
+[W¹tek 0 - ack] wstawia do kolejki zg³oszenie 2. [zegar = 9]
+[Watek 0; zegar 9] KOLEJKA: id: 1 time: 6 weight: 57;   id: 2 time: 8 weight: 70;       KONIEC KOLEJKI
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  0 o TAGU: 789.  [zegar z wiadomosci = 7]
+[W¹tek 1 - ack] usuwa z kolejki zg³oszenie 0.[zegar = 6]
+[W¹tek 1 - ack] Suma wag: 0 .[zegar = 6]
+[W¹tek 1 - ack] otrzyma³ wiadomoœæ od  2 o TAGU: 123.  [zegar z wiadomosci = 7]
+[W¹tek 1 - ack] wstawia do kolejki zg³oszenie 2. [zegar = 9]
+[Watek 1; zegar 9] KOLEJKA: id: 1 time: 6 weight: 57;   id: 2 time: 8 weight: 70;       KONIEC KOLEJKI
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 456.  [zegar z wiadomosci = 9]
+[W¹tek 2 - ack] ustawia w tablicy ack od  1. [zegar = 8]
+Tab_ack: [ 1, 1, 1]
+[W¹tek 2 - ack] ACK probuje wybudziæ w¹tek :D [zegar = 8]
+[W¹tek 2 - main] wszytskie w¹tki odebra³y moj¹ wiadomoœæ wiadomoœci. [zegar = 8] Pozdrawiam, watek 2
+[W¹tek 2 - main] wyzerowuje tablice ack i weje¿dza do góry. SEKCJA KRYTYCZNA [zegar = 8]
+
+[W¹tek 2 - main] wje¿dzam do góry przez 5 sekund [zegar = 8]
+
+[W¹tek 2 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 789.  [zegar z wiadomosci = 9]
+[W¹tek 2 - ack] usuwa z kolejki zg³oszenie 1.[zegar = 8]
+[W¹tek 2 - ack] Suma wag: 0 .[zegar = 8]
+[W¹tek 0 - ack] otrzyma³ wiadomoœæ od  1 o TAGU: 789.  [zegar z wiadomosci = 8]
+[W¹tek 0 - ack] usuwa z kolejki zg³oszenie 1.[zegar = 9]
+[W¹tek 0 - ack] Suma wag: 70 .[zegar = 9]
+
+[W¹tek 1 - main] KONIEC SEKCJI KRYTYCZNEJ [zegar = 9]
+
+[W¹tek 1 - main] wysy³a³ release syna³ do wszystkich i zje¿d¿a na dó³. [zegar = 9]
+[W¹tek 1 - main] usuwa swoje zg³oszenie ze swojej kolejki. [zegar = 9]
+[W¹tek 1 - main] zjed¿a z góry przez 6 sekund................ [zegar = 9]
