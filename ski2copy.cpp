@@ -18,10 +18,14 @@
 int clockLamport = 0;
 int stop = 0;
 
+
 pthread_mutex_t	mutexClock = PTHREAD_MUTEX_INITIALIZER;
+
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
+
 using namespace std;
+
 
 struct queue_element
 {
@@ -69,6 +73,7 @@ void print(const data & myData)
 
 int checkWeights(const data & myData)
 {
+
     int sum = 0;
     for (auto const& elem : myData.vect)
     {
@@ -88,6 +93,8 @@ void* receiveAndSendAck(void* arg)
     {
         MPI_Status status;
         int msg[MSG_SIZE], receivedClock, receivedWeight;
+        //struct data* dane = (struct data*)arg;
+
 
         MPI_Recv(msg, MSG_SIZE, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         printf("[Wątek %d - ack] otrzymał wiadomość od  %d o TAGU: %d.  [zegar z wiadomosci = %d]\n", dane.rank, status.MPI_SOURCE, status.MPI_TAG, receivedClock);
@@ -104,9 +111,13 @@ void* receiveAndSendAck(void* arg)
             clockLamport += 1;
 
             printf("[Wątek %d - ack] wstawia do kolejki zgłoszenie %d. [zegar = %d]\n", dane.rank, status.MPI_SOURCE, clockLamport);
+            //dane.head = insert(dane.head, new_element(status.MPI_SOURCE, receivedClock, receivedWeight));
             dane.vect.push_back(queue_element(status.MPI_SOURCE, receivedClock, receivedWeight));
             sort(dane.vect.begin(), dane.vect.end());
             print(dane);
+            //printf("[wątek %d] moja kolejka to: [zegar = %d]\n", dane.rank, clockLamport);
+            //print(dane.head);
+
             msg[0] = clockLamport;
             msg[1] = -1;
             MPI_Send(msg, MSG_SIZE, MPI_INT, status.MPI_SOURCE, TAG_ACK, MPI_COMM_WORLD);
@@ -139,6 +150,7 @@ void* receiveAndSendAck(void* arg)
                     break;
                 }
             }
+            //if ((checkWeights(dane.head, dane.rank) + dane.myWeight) > Capacity) {
             if ((checkWeights(dane) + dane.myWeight) > Capacity)
             {
 
@@ -155,9 +167,10 @@ void* receiveAndSendAck(void* arg)
         }
         else if (status.MPI_TAG == TAG_RELEASE)
         {
-            pthread_mutex_lock(&mutexClock);
             printf("[Wątek %d - ack] usuwa z kolejki zgłoszenie %d.[zegar = %d]\n", dane.rank, status.MPI_SOURCE, clockLamport);
 
+            pthread_mutex_lock(&mutexClock);
+            //dane.head = delete(dane.head, status.MPI_SOURCE);
             int idToRemove = status.MPI_SOURCE;
             dane.vect.erase(
                 remove_if(dane.vect.begin(), dane.vect.end(), [&idToRemove](queue_element const & queue_element)
@@ -180,6 +193,7 @@ void* receiveAndSendAck(void* arg)
 
             printf("[Wątek %d - ack] Suma wag: %d .[zegar = %d]\n", dane.rank, checkWeights(dane), clockLamport);
 
+            //if ((checkWeights(dane.head, dane.rank) + dane.myWeight) > Capacity) {
             if ((checkWeights(dane) + dane.myWeight) > Capacity)
             {
                 success = 0;
@@ -193,6 +207,8 @@ void* receiveAndSendAck(void* arg)
             }
             pthread_mutex_unlock(&mutexClock); // Zmiana- unlock po signal
         }
+
+
     }
     return NULL;
 }
@@ -203,6 +219,7 @@ void* mainSkiThread(void* arg)
     while (!stop)
     {
         int msg[MSG_SIZE];
+        //struct data* dane = (struct data*)arg;
 
         int i;
         int receivedClock, receivedStatus;
@@ -223,12 +240,16 @@ void* mainSkiThread(void* arg)
         }
         // semafor V
         //wstaw do kolejki wlasne zadanie
+        //printf("[Wątek %d - main] chce wstawić do swojej kolejki swój request. [zegar = %d]\n", dane->rank, clockLamport);
+
+        //dane->head = insert(dane->head, new_element(dane->rank, clockLamport, dane->myWeight));
         dane.vect.push_back(queue_element(dane.rank, clockLamport, dane.myWeight));
         sort(dane.vect.begin(), dane.vect.end());
 
         printf("[Wątek %d - main] wstawił do swojej kolejki swój request. [zegar = %d]\n", dane.rank, clockLamport);
 
         //sprawdz warunek bazujacy na kolejce (suma wag) i czy od wszystkich ack
+
         printf("[Wątek %d - main] sprawdza czy wszytskie wątki odebrały wiadomości. [zegar = %d]\n", dane.rank, clockLamport);
         do
         {
@@ -242,6 +263,7 @@ void* mainSkiThread(void* arg)
                     break;
                 }
             }
+            //if ((checkWeights(dane->head, dane->rank) + dane->myWeight) > Capacity) {
             if ((checkWeights(dane) + dane.myWeight) > Capacity)
             {
                 success = 0;
@@ -261,7 +283,8 @@ void* mainSkiThread(void* arg)
 
         }
         while (1);
-        // mutex unlock
+
+        //dodałem tutaj ten mutex unlock
         pthread_mutex_unlock(&mutexClock);
 
         printf("[Wątek %d - main] wszytskie wątki odebrały moją wiadomość wiadomości. [zegar = %d] Pozdrawiam, watek %d\n", dane.rank, clockLamport, dane.rank);
@@ -295,6 +318,7 @@ void* mainSkiThread(void* arg)
         printf("[Wątek %d - main] usuwa swoje zgłoszenie ze swojej kolejki. [zegar = %d]\n", dane.rank, clockLamport);
 
         //  usun swoje zadanie z kolejki
+        //dane->head = delete(dane->head, dane->rank);
         int idToRemove = dane.rank;
         dane.vect.erase(
             remove_if(dane.vect.begin(), dane.vect.end(), [&idToRemove](queue_element const & queue_element)
@@ -322,6 +346,7 @@ int main(int argc, char **argv)
 {
     srand(time(NULL));
     int rank, size;
+
 
     int provided = 0;
     MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
